@@ -17,7 +17,8 @@ export default defineConfig([
   {
     rules: {
 
-      "no-alert": "error"
+      "no-alert": "error",
+      "vue/attribute-hyphenation": ["error", "never"]
     },
     languageOptions: {
       sourceType: 'module',

@@ -18,12 +18,8 @@ const totalPrice = ref("");
   <hr class="my-4">
     
   <SupplierList
-    :full-name="fullName"
-    :total-price="totalPrice"
+    :fullName="fullName"
+    :totalPrice="totalPrice"
   />
 </template>
 
-<style>
-@import "bootstrap-icons";
-@import "tailwindcss";
-</style>
