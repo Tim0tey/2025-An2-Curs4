@@ -1,29 +1,12 @@
 <script setup>
   import { useAuth } from "@/stores/auth"
+  import { useRoute } from "vue-router"
   const auth = useAuth()
+  const route = useRoute()
 </script>
 
 <template>
-  <header v-if="auth.isAuthenticated" class="p-4 bg-gray-200">
-    <nav class="flex gap-4 mb-4">
-      <RouterLink to="/">
-        Home
-      </RouterLink>
-      <RouterLink to="/flowers">
-        Flowers
-      </RouterLink> 
-      <RouterLink to="/computed">
-        Computed
-      </RouterLink>
-      <RouterLink to="/store">
-        Store
-      </RouterLink>
-      <RouterLink to="/tasks">
-        Tasks
-      </RouterLink>
-    </nav>
-  </header>
-  <RouterView v-if="auth.isAuthenticated || router.currentRoute.value.path === '/login'"/>
+  <RouterView v-if="auth.isAuthenticated || route.path === '/login'" />
 </template>
 
 <style>
