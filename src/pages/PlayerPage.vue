@@ -108,14 +108,13 @@ import MusicPlayer from '@/components/MusicPlayer.vue'
 import { usePlayer } from '@/stores/player'
 
 const player = usePlayer()
-
-// Get player info
+const playerInfo = player.playerInfo
 const {
   playlist,
   favoriteCount,
   playHistory,
   showVisualizer
-} = player.playerInfo
+} = playerInfo
 
 // Actions
 const clearPlaylist = () => {

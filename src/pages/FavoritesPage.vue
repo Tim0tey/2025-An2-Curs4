@@ -29,10 +29,16 @@
         <p class="mt-1 text-sm text-gray-500">
           Start adding vinyl records to your favorites
         </p>
-        <div class="mt-6">
+        <div class="mt-6 space-y-3">
+          <button
+            @click="clearAllFavorites"
+            class="w-full flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            🧹 Clear All Favorites
+          </button>
           <router-link
             to="/shop"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="w-full flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Browse Vinyl
           </router-link>
@@ -108,6 +114,12 @@ const removeFromFavorites = (productId) => {
 
 const addToCart = (productId) => {
   productsStore.manageData('cart', 'add', { id: productId, quantity: 1 })
+}
+
+const clearAllFavorites = () => {
+  if (confirm('Are you sure you want to clear all your favorites?')) {
+    productsStore.manageData('favorites', 'clear')
+  }
 }
 
 const logout = () => {

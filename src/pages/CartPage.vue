@@ -82,7 +82,13 @@
               <p>Subtotal</p>
               <p>${{ cartTotal.toFixed(2) }}</p>
             </div>
-            <div class="mt-6">
+            <div class="mt-6 space-y-3">
+              <button
+                @click="clearCart"
+                class="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                🗑️ Clear Cart
+              </button>
               <router-link
                 to="/checkout"
                 class="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -111,7 +117,13 @@ const cartItems = computed(() => productsStore.productInfo.cartItems)
 const cartTotal = computed(() => productsStore.productInfo.cartTotal)
 
 const removeFromCart = (productId) => {
-  productsStore.manageData('cart', 'remove', productId)
+  productsStore.manageCart('remove', productId)
+}
+
+const clearCart = () => {
+  if (confirm('Are you sure you want to clear your entire cart?')) {
+    productsStore.manageCart('clear')
+  }
 }
 
 const logout = () => {
@@ -120,10 +132,7 @@ const logout = () => {
 }
 
 onMounted(() => {
-  // Load cart from localStorage
-  const savedCart = localStorage.getItem('cart')
-  if (savedCart) {
-    productsStore.cart = JSON.parse(savedCart)
-  }
+  // Load cart using store method
+  productsStore.loadFromLocalStorage()
 })
 </script>

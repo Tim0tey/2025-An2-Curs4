@@ -23,13 +23,20 @@ export const usePlayer = defineStore("player", {
     repeat: 'none', // 'none', 'one', 'all'
     shuffle: false,
     
-    // Visual settings
-    showPlaylist: true,
-    showVisualizer: false,
+    // Visualizer settings
+    visualizer: true,
     
-    // History
+    // History and statistics
     playHistory: [],
-    favorites: []
+    skipCount: 0,
+    likeCount: 0,
+    
+    // Equalizer settings
+    equalizer: {
+      bass: 0,
+      mid: 0,
+      treble: 0
+    }
   }),
   
   getters: {
@@ -42,256 +49,244 @@ export const usePlayer = defineStore("player", {
       currentTime: state.currentTime,
       duration: state.duration,
       progress: state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0,
-      
-      // Playlist info
       playlist: state.playlist,
       currentIndex: state.currentIndex,
+      trackCount: state.playlist.length,
       hasNext: state.currentIndex < state.playlist.length - 1,
       hasPrevious: state.currentIndex > 0,
-      
-      // Settings
       repeat: state.repeat,
       shuffle: state.shuffle,
-      showPlaylist: state.showPlaylist,
-      showVisualizer: state.showVisualizer,
-      
-      // History and favorites
+      visualizer: state.visualizer,
       playHistory: state.playHistory,
-      favorites: state.favorites,
-      favoriteCount: state.favorites.length
+      skipCount: state.skipCount,
+      likeCount: state.likeCount,
+      equalizer: state.equalizer
     })
   },
-  
+
   actions: {
+    // Playback Control Actions (4)
     managePlayer(operation, data) {
       switch(operation) {
-        case 'load':
-          this.isLoading = true
-          this.currentTrack = data
-          this.currentTime = 0
-          this.isLoading = false
-          this.addToHistory(data)
-          break
-          
         case 'play':
-          if (this.currentTrack) {
-            this.isPlaying = true
-            this.isPaused = false
+          if (state.currentTrack) {
+            state.isPlaying = true
+            state.isPaused = false
           }
           break
           
         case 'pause':
-          this.isPlaying = false
-          this.isPaused = true
+          state.isPlaying = false
+          state.isPaused = true
           break
           
         case 'stop':
-          this.isPlaying = false
-          this.isPaused = false
-          this.currentTime = 0
-          break
-          
-        case 'toggle':
-          if (this.isPlaying) {
-            this.managePlayer('pause')
-          } else {
-            this.managePlayer('play')
-          }
+          state.isPlaying = false
+          state.isPaused = false
+          state.currentTrack = null
+          state.currentTime = 0
+          state.duration = 0
           break
           
         case 'next':
-          if (this.shuffle) {
-            this.playRandom()
-          } else {
-            this.playNext()
+          if (state.currentIndex < state.playlist.length - 1) {
+            state.currentIndex++
           }
           break
           
         case 'previous':
-          this.playPrevious()
+          if (state.currentIndex > 0) {
+            state.currentIndex--
+          }
+          break
+      }
+    },
+
+    // Playlist Management Actions (3)
+    managePlaylist(operation, data) {
+      switch(operation) {
+        case 'add':
+          state.playlist.push(data)
           break
           
-        case 'setVolume':
-          this.volume = Math.max(0, Math.min(1, data))
+        case 'remove':
+          state.playlist = state.playlist.filter((_, index) => index !== data)
+          if (state.currentIndex >= data && state.currentIndex > 0) {
+            state.currentIndex--
+          }
+          break
+          
+        case 'clear':
+          state.playlist = []
+          state.currentIndex = 0
+          break
+          
+        case 'shuffle':
+          const shuffled = [...state.playlist].sort(() => Math.random() - 0.5)
+          state.playlist = shuffled
+          state.currentIndex = 0
+          break
+          
+        case 'move':
+          const [from, to] = data
+          const item = state.playlist[from]
+          state.playlist.splice(from, 1)
+          state.playlist.splice(to, 0, item)
+          if (state.currentIndex === from) {
+            state.currentIndex = to
+          }
+          break
+      }
+    },
+
+    // Volume Control Actions (1)
+    manageVolume(operation, data) {
+      switch(operation) {
+        case 'set':
+          state.volume = Math.max(0, Math.min(1, data))
+          break
+          
+        case 'up':
+          state.volume = Math.min(1, state.volume + 0.1)
+          break
+          
+        case 'down':
+          state.volume = Math.max(0, state.volume - 0.1)
+          break
+      }
+    },
+
+    // Track Management Actions (2)
+    manageTrack(operation, data) {
+      switch(operation) {
+        case 'load':
+          state.currentTrack = data
+          state.currentTime = 0
+          state.duration = data.duration || 0
+          state.currentIndex = state.playlist.findIndex(track => track.id === data.id)
           break
           
         case 'seek':
-          this.currentTime = Math.max(0, Math.min(this.duration, data))
+          state.currentTime = Math.max(0, Math.min(state.duration, data))
           break
-          
-        case 'setProgress':
-          this.currentTime = (data / 100) * this.duration
-          break
-          
-        case 'setPlaylist':
-          this.playlist = data
-          this.currentIndex = 0
-          if (data.length > 0) {
-            this.managePlayer('load', data[0])
-          }
-          break
-          
-        case 'addToPlaylist':
-          this.playlist.push(data)
-          break
-          
-        case 'removeFromPlaylist':
-          this.playlist = this.playlist.filter(track => track.id !== data)
-          break
-          
-        case 'setRepeat':
-          this.repeat = data
-          break
-          
+      }
+    },
+
+    // Settings Actions (2)
+    manageSettings(operation, data) {
+      switch(operation) {
         case 'toggleRepeat':
           const modes = ['none', 'one', 'all']
-          const currentIndex = modes.indexOf(this.repeat)
-          this.repeat = modes[(currentIndex + 1) % modes.length]
+          const currentIndex = modes.indexOf(state.repeat)
+          const nextIndex = (currentIndex + 1) % modes.length
+          state.repeat = modes[nextIndex]
           break
           
         case 'toggleShuffle':
-          this.shuffle = !this.shuffle
-          break
-          
-        case 'togglePlaylist':
-          this.showPlaylist = !this.showPlaylist
+          state.shuffle = !state.shuffle
           break
           
         case 'toggleVisualizer':
-          this.showVisualizer = !this.showVisualizer
+          state.visualizer = !state.visualizer
           break
-          
-        case 'addToFavorites':
-          if (!this.favorites.find(fav => fav.id === data.id)) {
-            this.favorites.push(data)
+      }
+    },
+
+    // Equalizer Actions (1)
+    manageEqualizer(operation, data) {
+      switch(operation) {
+        case 'set':
+          state.equalizer = {
+            bass: Math.max(0, Math.min(1, data.bass || 0)),
+            mid: Math.max(0, Math.min(1, data.mid || 0)),
+            treble: Math.max(0, Math.min(1, data.treble || 0))
           }
           break
           
-        case 'removeFromFavorites':
-          this.favorites = this.favorites.filter(fav => fav.id !== data)
+        case 'reset':
+          state.equalizer = { bass: 0, mid: 0, treble: 0 }
+          break
+      }
+    },
+
+    // Statistics Actions (1)
+    manageStats(operation, data) {
+      switch(operation) {
+        case 'recordSkip':
+          state.skipCount++
           break
           
-        case 'toggleFavorite':
-          const isFavorite = this.favorites.find(fav => fav.id === data.id)
-          if (isFavorite) {
-            this.managePlayer('removeFromFavorites', data.id)
-          } else {
-            this.managePlayer('addToFavorites', data)
-          }
+        case 'recordLike':
+          state.likeCount++
+          break
+          
+        case 'reset':
+          state.skipCount = 0
+          state.likeCount = 0
+          state.playHistory = []
           break
       }
-      
-      // Save player state
-      this.saveToLocalStorage()
-    },
+    }
+  },
+
+  loadFromLocalStorage() {
+    const savedVolume = localStorage.getItem("player_volume")
+    const savedRepeat = localStorage.getItem("player_repeat")
+    const savedShuffle = localStorage.getItem("player_shuffle")
+    const savedVisualizer = localStorage.getItem("player_visualizer")
+    const savedPlaylist = localStorage.getItem("player_playlist")
+    const savedCurrentTrack = localStorage.getItem("player_current_track")
+    const savedCurrentTime = localStorage.getItem("player_current_time")
+    const savedDuration = localStorage.getItem("player_duration")
+    const savedPlayHistory = localStorage.getItem("player_play_history")
+    const savedSkipCount = localStorage.getItem("player_skip_count")
+    const savedLikeCount = localStorage.getItem("player_like_count")
+    const savedEqualizer = localStorage.getItem("player_equalizer")
     
-    playNext() {
-      if (this.currentIndex < this.playlist.length - 1) {
-        this.currentIndex++
-        this.managePlayer('load', this.playlist[this.currentIndex])
-        this.managePlayer('play')
-      } else if (this.repeat === 'all') {
-        this.currentIndex = 0
-        this.managePlayer('load', this.playlist[this.currentIndex])
-        this.managePlayer('play')
-      }
-    },
+    if (savedVolume) state.volume = parseFloat(savedVolume)
+    if (savedRepeat) state.repeat = savedRepeat
+    if (savedShuffle) state.shuffle = savedShuffle === 'true'
+    if (savedVisualizer) state.visualizer = savedVisualizer === 'true'
+    if (savedPlaylist) state.playlist = JSON.parse(savedPlaylist)
+    if (savedCurrentTrack) state.currentTrack = JSON.parse(savedCurrentTrack)
+    if (savedCurrentTime) state.currentTime = parseFloat(savedCurrentTime)
+    if (savedDuration) state.duration = parseFloat(savedDuration)
+    if (savedPlayHistory) state.playHistory = JSON.parse(savedPlayHistory)
+    if (savedSkipCount) state.skipCount = parseInt(savedSkipCount)
+    if (savedLikeCount) state.likeCount = parseInt(savedLikeCount)
+    if (savedEqualizer) {
+      const [bass, mid, treble] = savedEqualizer.split(',').map(Number)
+      state.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
+    }
+  },
+  loadFromLocalStorage() {
+    const savedVolume = localStorage.getItem("player_volume")
+    const savedRepeat = localStorage.getItem("player_repeat")
+    const savedShuffle = localStorage.getItem("player_shuffle")
+    const savedVisualizer = localStorage.getItem("player_visualizer")
+    const savedPlaylist = localStorage.getItem("player_playlist")
+    const savedCurrentTrack = localStorage.getItem("player_current_track")
+    const savedCurrentTime = localStorage.getItem("player_current_time")
+    const savedDuration = localStorage.getItem("player_duration")
+    const savedPlayHistory = localStorage.getItem("player_play_history")
+    const savedSkipCount = localStorage.getItem("player_skip_count")
+    const savedLikeCount = localStorage.getItem("player_like_count")
+    const savedEqualizer = localStorage.getItem("player_equalizer")
     
-    playPrevious() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--
-        this.managePlayer('load', this.playlist[this.currentIndex])
-        this.managePlayer('play')
-      } else if (this.repeat === 'all') {
-        this.currentIndex = this.playlist.length - 1
-        this.managePlayer('load', this.playlist[this.currentIndex])
-        this.managePlayer('play')
-      }
-    },
-    
-    playRandom() {
-      const randomIndex = Math.floor(Math.random() * this.playlist.length)
-      this.currentIndex = randomIndex
-      this.managePlayer('load', this.playlist[this.currentIndex])
-      this.managePlayer('play')
-    },
-    
-    addToHistory(track) {
-      // Remove if already exists
-      this.playHistory = this.playHistory.filter(t => t.id !== track.id)
-      // Add to beginning
-      this.playHistory.unshift(track)
-      // Keep only last 50 tracks
-      this.playHistory = this.playHistory.slice(0, 50)
-    },
-    
-    updateTime(currentTime, duration) {
-      this.currentTime = currentTime
-      this.duration = duration
-      
-      // Auto-play next track when current ends
-      if (currentTime >= duration && this.isPlaying) {
-        if (this.repeat === 'one') {
-          this.currentTime = 0
-          this.managePlayer('play')
-        } else {
-          this.managePlayer('next')
-        }
-      }
-    },
-    
-    saveToLocalStorage() {
-      // Save player settings
-      localStorage.setItem("player_volume", this.volume.toString())
-      localStorage.setItem("player_repeat", this.repeat)
-      localStorage.setItem("player_shuffle", this.shuffle.toString())
-      localStorage.setItem("player_showPlaylist", this.showPlaylist.toString())
-      localStorage.setItem("player_showVisualizer", this.showVisualizer.toString())
-      
-      // Save favorites as comma-separated string
-      localStorage.setItem("player_favorites", this.favorites.map(fav => fav.id).join(','))
-      
-      // Save history as string: id|title|artist;id|title|artist
-      const historyString = this.playHistory.map(track => 
-        `${track.id}|${track.title}|${track.artist}`
-      ).join(';')
-      localStorage.setItem("player_history", historyString)
-    },
-    
-    loadFromLocalStorage() {
-      // Load player settings
-      const volume = localStorage.getItem("player_volume")
-      const repeat = localStorage.getItem("player_repeat")
-      const shuffle = localStorage.getItem("player_shuffle")
-      const showPlaylist = localStorage.getItem("player_showPlaylist")
-      const showVisualizer = localStorage.getItem("player_showVisualizer")
-      
-      if (volume) this.volume = parseFloat(volume) || 0.7
-      if (repeat) this.repeat = repeat || 'none'
-      if (shuffle) this.shuffle = shuffle === 'true'
-      if (showPlaylist) this.showPlaylist = showPlaylist === 'true'
-      if (showVisualizer) this.showVisualizer = showVisualizer === 'true'
-      
-      // Load favorites
-      const savedFavorites = localStorage.getItem("player_favorites")
-      if (savedFavorites) {
-        // This would need to be populated with actual track data
-        const favoriteIds = savedFavorites.split(',').map(id => parseInt(id)).filter(id => !isNaN(id))
-        // In a real app, you'd fetch track data for these IDs
-      }
-      
-      // Load history
-      const savedHistory = localStorage.getItem("player_history")
-      if (savedHistory) {
-        this.playHistory = savedHistory.split(';').map(trackStr => {
-          const [id, title, artist] = trackStr.split('|')
-          return {
-            id: parseInt(id) || 0,
-            title: title || '',
-            artist: artist || ''
-          }
-        }).filter(track => track.id > 0 && track.title)
-      }
+    if (savedVolume) state.volume = parseFloat(savedVolume)
+    if (savedRepeat) state.repeat = savedRepeat
+    if (savedShuffle) state.shuffle = savedShuffle === 'true'
+    if (savedVisualizer) state.visualizer = savedVisualizer === 'true'
+    if (savedPlaylist) state.playlist = JSON.parse(savedPlaylist)
+    if (savedCurrentTrack) state.currentTrack = JSON.parse(savedCurrentTrack)
+    if (savedCurrentTime) state.currentTime = parseFloat(savedCurrentTime)
+    if (savedDuration) state.duration = parseFloat(savedDuration)
+    if (savedPlayHistory) state.playHistory = JSON.parse(savedPlayHistory)
+    if (savedSkipCount) state.skipCount = parseInt(savedSkipCount)
+    if (savedLikeCount) state.likeCount = parseInt(savedLikeCount)
+    if (savedEqualizer) {
+      const [bass, mid, treble] = savedEqualizer.split(',').map(Number)
+      state.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
     }
   }
 })

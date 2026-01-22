@@ -221,9 +221,6 @@ const addToCart = () => {
   if (!product.value) return
   
   productsStore.manageData('cart', 'add', { id: product.value.id, quantity: 1 })
-  
-  // Show success message (you could use a toast notification here)
-  alert(`${product.value.name} added to cart!`)
 }
 
 // Buy now (add to cart and redirect to cart)

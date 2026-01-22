@@ -6,7 +6,6 @@ import ShopPage from '@/pages/ShopPage.vue'
 import LoginPage from '@/pages/login/LoginPage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import FavoritesPage from '@/pages/FavoritesPage.vue'
-import DashboardPage from '@/components/dashboard/DashboardPage.vue'
 import PlayerPage from '@/pages/PlayerPage.vue'
 import VinylDetailPage from '@/pages/VinylDetailPage.vue'
 import CollectionPage from '@/pages/CollectionPage.vue'
@@ -22,27 +21,22 @@ const routes = [
     name: 'shop',
     component: ShopPage
   },
+    {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage
+  },
   {
     path: '/login',
     name: 'login',
     component: LoginPage
   },
   {
-    path: '/cart',
-    name: 'cart',
-    component: CartPage
-  },
-  {
     path: '/favorites',
     name: 'favorites',
     component: FavoritesPage
   },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: DashboardPage
-  },
-  {
+    {
     path: '/player',
     name: 'player',
     component: PlayerPage
@@ -61,7 +55,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: routes,
   linkActiveClass: 'btn-primary border'
 })
 

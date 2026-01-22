@@ -1,38 +1,18 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white shadow rounded-lg p-6">
-      <div class="flex items-center">
-        <div class="p-3 bg-blue-100 rounded-full">
-          <i class="bi bi-cart w-6 h-6 text-blue-600"></i>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-lg font-medium text-gray-900">Cart Items</h3>
-          <p class="text-2xl font-bold text-blue-600">{{ cartCount }}</p>
-        </div>
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Your Stats</h3>
+    <div class="space-y-4">
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Cart Items</span>
+        <span class="font-medium">{{ cartItemCount }}</span>
       </div>
-    </div>
-
-    <div class="bg-white shadow rounded-lg p-6">
-      <div class="flex items-center">
-        <div class="p-3 bg-red-100 rounded-full">
-          <i class="bi bi-heart-fill w-6 h-6 text-red-600"></i>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-lg font-medium text-gray-900">Favorites</h3>
-          <p class="text-2xl font-bold text-red-600">{{ favoriteCount }}</p>
-        </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Favorites</span>
+        <span class="font-medium text-red-600">{{ favoriteCount }}</span>
       </div>
-    </div>
-
-    <div class="bg-white shadow rounded-lg p-6">
-      <div class="flex items-center">
-        <div class="p-3 bg-green-100 rounded-full">
-          <i class="bi bi-bell w-6 h-6 text-green-600"></i>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-lg font-medium text-gray-900">Notifications</h3>
-          <p class="text-2xl font-bold text-green-600">{{ notificationCount }}</p>
-        </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Notifications</span>
+        <span class="font-medium text-blue-600">{{ notificationCount }}</span>
       </div>
     </div>
   </div>
@@ -46,7 +26,7 @@ import { useNotifications } from '@/stores/notifications'
 const productsStore = useProducts()
 const notificationsStore = useNotifications()
 
-const cartCount = computed(() => productsStore.productInfo.cartItemCount)
+const cartItemCount = computed(() => productsStore.productInfo.cartItemCount)
 const favoriteCount = computed(() => productsStore.productInfo.favoriteCount)
 const notificationCount = computed(() => notificationsStore.notificationInfo.unreadCount)
 </script>

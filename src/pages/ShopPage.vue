@@ -92,10 +92,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useProducts } from '@/stores/products'
 import { useAuth } from '@/stores/auth'
-import { useRouter } from 'vue-router'
 
 const productsStore = useProducts()
 const authStore = useAuth()

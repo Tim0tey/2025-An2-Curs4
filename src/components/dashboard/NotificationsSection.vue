@@ -1,56 +1,28 @@
 <template>
-  <div class="bg-white shadow rounded-lg p-6">
-    <h3 class="text-lg font-medium text-gray-900 mb-4">Notifications</h3>
-    
-    <div v-if="notifications.length === 0" class="text-center py-8">
-      <i class="bi bi-bell mx-auto h-12 w-12 text-gray-400"></i>
-      <p class="mt-2 text-sm text-gray-500">No notifications</p>
-    </div>
-    
-    <div v-else class="space-y-3">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Notifications</h3>
+    <div class="space-y-3">
       <div
         v-for="notification in recentNotifications"
         :key="notification.id"
-        :class="[
-          'p-3 rounded-lg border',
-          notification.read ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-200'
-        ]"
+        class="flex items-start space-x-3 p-3 border-b border-gray-200 hover:bg-gray-50"
       >
-        <div class="flex items-start">
-          <div class="flex-shrink-0">
-            <i class="bi bi-bell w-5 h-5" :class="notification.read ? 'text-gray-400' : 'text-blue-600'"></i>
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <i class="bi bi-bell text-blue-600"></i>
           </div>
-          <div class="ml-3 flex-1">
-            <p class="text-sm font-medium text-gray-900">{{ notification.title || 'Notification' }}</p>
-            <p class="text-sm text-gray-500">{{ notification.message || 'No message' }}</p>
-            <p class="text-xs text-gray-400 mt-1">{{ formatTime(notification.timestamp) }}</p>
-          </div>
-          <div class="flex-shrink-0 ml-2">
-            <button
-              v-if="!notification.read"
-              @click="markAsRead(notification.id)"
-              class="text-blue-600 hover:text-blue-800 text-xs"
-            >
-              Mark as read
-            </button>
-          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+          <p class="text-sm text-gray-600">{{ notification.message }}</p>
+          <p class="text-xs text-gray-500">{{ formatDate(notification.timestamp) }}</p>
         </div>
       </div>
     </div>
     
-    <div class="mt-4 flex justify-between">
-      <button
-        @click="markAllAsRead"
-        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
-      >
-        Mark all as read
-      </button>
-      <button
-        @click="clearNotifications"
-        class="text-red-600 hover:text-red-800 text-sm font-medium"
-      >
-        Clear all
-      </button>
+    <div v-if="recentNotifications.length === 0" class="text-center py-8">
+      <i class="bi bi-bell text-4xl text-gray-400"></i>
+      <p class="mt-2 text-gray-600">No recent notifications</p>
     </div>
   </div>
 </template>
@@ -61,23 +33,9 @@ import { useNotifications } from '@/stores/notifications'
 
 const notificationsStore = useNotifications()
 
-const notifications = computed(() => notificationsStore.notificationInfo.all)
 const recentNotifications = computed(() => notificationsStore.notificationInfo.recent)
 
-const markAsRead = (id) => {
-  notificationsStore.manageNotifications('mark', id)
-}
-
-const markAllAsRead = () => {
-  notificationsStore.manageNotifications('mark', 'all')
-}
-
-const clearNotifications = () => {
-  notificationsStore.manageNotifications('clear')
-}
-
-const formatTime = (timestamp) => {
-  const date = new Date(timestamp)
-  return date.toLocaleString()
+const formatDate = (timestamp) => {
+  return new Date(timestamp).toLocaleDateString()
 }
 </script>
