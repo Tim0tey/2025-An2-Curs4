@@ -116,10 +116,7 @@ const logout = () => {
 }
 
 onMounted(() => {
-  // Load favorites from localStorage
-  const savedFavorites = localStorage.getItem('favorites')
-  if (savedFavorites) {
-    productsStore.favorites = JSON.parse(savedFavorites)
-  }
+  // Load favorites using store method
+  productsStore.loadFromLocalStorage()
 })
 </script>
