@@ -139,15 +139,7 @@ const logout = () => {
 }
 
 onMounted(() => {
-  // Load data from localStorage
-  const savedFavorites = localStorage.getItem('favorites')
-  const savedCart = localStorage.getItem('cart')
-  
-  if (savedFavorites) {
-    productsStore.favorites = JSON.parse(savedFavorites)
-  }
-  if (savedCart) {
-    productsStore.cart = JSON.parse(savedCart)
-  }
+  // Load data using store methods
+  productsStore.loadFromLocalStorage()
 })
 </script>
