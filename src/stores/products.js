@@ -1,4 +1,5 @@
 import { defineStore } from "pinia"
+import { useNotifications } from "./notifications"
 
 export const useProducts = defineStore("products", {
   state: () => ({
