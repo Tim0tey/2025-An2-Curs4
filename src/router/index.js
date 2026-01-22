@@ -59,22 +59,22 @@ const router = createRouter({
   linkActiveClass: 'btn-primary border'
 })
 
-// Navigation guard
-router.beforeEach((to, from, next) => {
-  const publicRoutes = ['/login']
-  
-  // Simple check - redirect to login if not on public route
-  if (!publicRoutes.includes(to.path)) {
-    // Check localStorage directly to avoid store initialization issues
-    const isAuthenticated = localStorage.getItem('auth_authenticated') === "true"
-    
-    if (!isAuthenticated) {
-      next('/login')
-      return
-    }
-  }
-  
-  next()
-})
+// Navigation guard temporarily disabled for development
+// router.beforeEach((to, from, next) => {
+//   const publicRoutes = ['/login']
+//   
+//   // Simple check - redirect to login if not on public route
+//   if (!publicRoutes.includes(to.path)) {
+//     // Check localStorage directly to avoid store initialization issues
+//     const isAuthenticated = localStorage.getItem('auth_authenticated') === "true"
+//     
+//     if (!isAuthenticated) {
+//       next('/login')
+//       return
+//     }
+//   }
+//   
+//   next()
+// })
 
 export default router
