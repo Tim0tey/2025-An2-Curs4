@@ -258,35 +258,5 @@ export const usePlayer = defineStore("player", {
       const [bass, mid, treble] = savedEqualizer.split(',').map(Number)
       state.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
     }
-  },
-  loadFromLocalStorage() {
-    const savedVolume = localStorage.getItem("player_volume")
-    const savedRepeat = localStorage.getItem("player_repeat")
-    const savedShuffle = localStorage.getItem("player_shuffle")
-    const savedVisualizer = localStorage.getItem("player_visualizer")
-    const savedPlaylist = localStorage.getItem("player_playlist")
-    const savedCurrentTrack = localStorage.getItem("player_current_track")
-    const savedCurrentTime = localStorage.getItem("player_current_time")
-    const savedDuration = localStorage.getItem("player_duration")
-    const savedPlayHistory = localStorage.getItem("player_play_history")
-    const savedSkipCount = localStorage.getItem("player_skip_count")
-    const savedLikeCount = localStorage.getItem("player_like_count")
-    const savedEqualizer = localStorage.getItem("player_equalizer")
-    
-    if (savedVolume) state.volume = parseFloat(savedVolume)
-    if (savedRepeat) state.repeat = savedRepeat
-    if (savedShuffle) state.shuffle = savedShuffle === 'true'
-    if (savedVisualizer) state.visualizer = savedVisualizer === 'true'
-    if (savedPlaylist) state.playlist = JSON.parse(savedPlaylist)
-    if (savedCurrentTrack) state.currentTrack = JSON.parse(savedCurrentTrack)
-    if (savedCurrentTime) state.currentTime = parseFloat(savedCurrentTime)
-    if (savedDuration) state.duration = parseFloat(savedDuration)
-    if (savedPlayHistory) state.playHistory = JSON.parse(savedPlayHistory)
-    if (savedSkipCount) state.skipCount = parseInt(savedSkipCount)
-    if (savedLikeCount) state.likeCount = parseInt(savedLikeCount)
-    if (savedEqualizer) {
-      const [bass, mid, treble] = savedEqualizer.split(',').map(Number)
-      state.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
-    }
   }
 })

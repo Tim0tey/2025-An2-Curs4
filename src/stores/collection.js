@@ -231,23 +231,16 @@ export const useCollection = defineStore("collection", {
       }).filter(item => item.id > 0 && item.title)
     }
     
-    // Load genres
-    const savedGenres = localStorage.getItem("collection_genres")
-    if (savedGenres) {
-      state.genres = savedGenres.split(',').filter(genre => genre.trim())
-    }
-    
     // Load artists
     const savedArtists = localStorage.getItem("collection_artists")
     if (savedArtists) {
-      state.artists = savedArtists.split(';').map(artistStr => {
-        const [id, name, addedDate] = artistStr.split('|')
-        return {
-          id: parseInt(id) || 0,
-          name: name || '',
-          addedDate: addedDate || new Date().toISOString()
-        }
-      }).filter(artist => artist.id > 0 && artist.name)
+      state.artists = JSON.parse(savedArtists)
+    }
+    
+    // Load statistics
+    const savedStats = localStorage.getItem("collection_stats")
+    if (savedStats) {
+      state.statistics = JSON.parse(savedStats)
     }
   }
 })

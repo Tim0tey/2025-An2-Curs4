@@ -3,17 +3,17 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-6">
         <div class="flex items-center">
-          <h1 class="text-2xl font-bold text-gray-900">🎵 VinylFie</h1>
+          <h1 class="text-2xl font-bold text-gray-900">🎵 Vinyl Store</h1>
+          <p class="mt-2 text-gray-600">Browse our collection</p>
         </div>
         
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex space-x-8">
           <router-link to="/" class="text-gray-700 hover:text-blue-600">Home</router-link>
-          <router-link to="/shop" class="text-gray-700 hover:text-blue-600">Shop</router-link>
+          <router-link to="/shop" class="text-blue-600 font-medium">Shop</router-link>
           <router-link to="/favorites" class="text-gray-700 hover:text-blue-600">Favorites</router-link>
-          <router-link to="/cart" class="text-gray-700 hover:text-blue-600">Cart</router-link>
-          <router-link to="/collection" class="text-gray-700 hover:text-blue-600">📀 Collection</router-link>
-          <router-link to="/player" class="text-gray-700 hover:text-blue-600">🎵 Player</router-link>
+          <router-link to="/collection" class="text-gray-700 hover:text-blue-600">Collection</router-link>
+          <router-link to="/player" class="text-gray-700 hover:text-blue-600">Player</router-link>
           <router-link to="/dashboard" class="text-gray-700 hover:text-blue-600">Dashboard</router-link>
         </nav>
 
