@@ -19,10 +19,6 @@ export const useNotifications = defineStore("notifications", {
   
   actions: {
     manageNotifications(operation, data) {
-      const saveData = () => {
-        localStorage.setItem("notifications", JSON.stringify(this.notifications))
-      }
-      
       switch(operation) {
         case 'add':
           const newNotification = {
@@ -46,13 +42,26 @@ export const useNotifications = defineStore("notifications", {
           this.notifications = []
           break
       }
-      saveData()
+      // Save notifications as string: id|timestamp|read|priority|message;id|timestamp|read|priority|message
+      const notificationString = this.notifications.map(notif => 
+        `${notif.id}|${notif.timestamp}|${notif.read}|${notif.priority}|${notif.message || ''}`
+      ).join(';')
+      localStorage.setItem("notifications", notificationString)
     },
     
     loadFromLocalStorage() {
       const saved = localStorage.getItem("notifications")
       if (saved) {
-        this.notifications = JSON.parse(saved)
+        this.notifications = saved.split(';').map(notifStr => {
+          const [id, timestamp, read, priority, message] = notifStr.split('|')
+          return {
+            id: parseInt(id) || 0,
+            timestamp: timestamp || new Date().toISOString(),
+            read: read === 'true',
+            priority: priority || 'normal',
+            message: message || ''
+          }
+        }).filter(notif => notif.id > 0)
       }
     }
   }

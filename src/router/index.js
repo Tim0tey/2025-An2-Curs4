@@ -1,48 +1,62 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '@/pages/login/LoginPage.vue'
-import RegisterPage from '@/pages/RegisterPage.vue'
-import ForgotPasswordPage from '@/pages/login/ForgotPasswordPage.vue'
-import Shop from '@/pages/Shop.vue'
-import ProductDetailsPage from '@/pages/ProductDetailsPage.vue'
-import FavoritesPage from '@/pages/FavoritesPage.vue'
-import CartPage from '@/pages/shoppage/CartPage.vue'
-import CategoriesPage from '@/pages/CategoriesPage.vue'
-import CustomerServicePage from '@/pages/help/CustomerServicePage.vue'
-import FeedbackPage from '@/explainer/FeedbackPage.vue'
-import ChatSellersPage from '@/pages/customer/ChatSellersPage.vue'
-import AboutUsPage from '@/explainer/AboutUsPage.vue'
-import HowToBuyPage from '@/explainer/HowToBuyPage.vue'
-import HowToSellPage from '@/explainer/HowToSellPage.vue'
-import HelpPage from '@/explainer/HelpPage.vue'
-import UserProfilePage from '@/pages/customer/UserProfilePage.vue'
-import SellItemsPage from '@/pages/customer/SellItemsPage.vue'
-import OrderHistoryPage from '@/pages/customer/OrderHistoryPage.vue'
-import ContactPage from '@/pages/explainer/ContactPage.vue'
-import PrivacyPage from '@/explainer/PrivacyPage.vue'
 import { useAuth } from '@/stores/auth'
 
+// Import pages
+import ShopPage from '@/pages/ShopPage.vue'
+import LoginPage from '@/pages/login/LoginPage.vue'
+import CartPage from '@/pages/CartPage.vue'
+import FavoritesPage from '@/pages/FavoritesPage.vue'
+import DashboardPage from '@/pages/DashboardPage.vue'
+import PlayerPage from '@/pages/PlayerPage.vue'
+import VinylDetailPage from '@/pages/VinylDetailPage.vue'
+import CollectionPage from '@/pages/CollectionPage.vue'
+
 const routes = [
-  { path: "/", component: Shop },
-  { path: "/shop", component: Shop },
-  { path: "/product/:id", component: ProductDetailsPage },
-  { path: "/favorites", component: FavoritesPage },
-  { path: "/cart", component: CartPage },
-  { path: "/categories", component: CategoriesPage },
-  { path: "/customer-service", component: CustomerServicePage },
-  { path: "/feedback", component: FeedbackPage },
-  { path: "/chat-sellers", component: ChatSellersPage },
-  { path: "/about-us", component: AboutUsPage },
-  { path: "/how-to-buy", component: HowToBuyPage },
-  { path: "/how-to-sell", component: HowToSellPage },
-  { path: "/help", component: HelpPage },
-  { path: "/user-profile", component: UserProfilePage },
-  { path: "/sell-items", component: SellItemsPage },
-  { path: "/order-history", component: OrderHistoryPage },
-  { path: "/contact", component: ContactPage },
-  { path: "/privacy", component: PrivacyPage },
-  { path: "/login", component: LoginPage },
-  { path: "/register", component: RegisterPage },
-  { path: "/forgot-password", component: ForgotPasswordPage },
+  {
+    path: '/',
+    name: 'home',
+    component: ShopPage
+  },
+  {
+    path: '/shop',
+    name: 'shop',
+    component: ShopPage
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage
+  },
+  {
+    path: '/favorites',
+    name: 'favorites',
+    component: FavoritesPage
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardPage
+  },
+  {
+    path: '/player',
+    name: 'player',
+    component: PlayerPage
+  },
+  {
+    path: '/vinyl/:id',
+    name: 'vinyl-detail',
+    component: VinylDetailPage
+  },
+  {
+    path: '/collection',
+    name: 'collection',
+    component: CollectionPage
+  }
 ]
 
 const router = createRouter({
@@ -51,17 +65,22 @@ const router = createRouter({
   linkActiveClass: 'btn-primary border'
 })
 
-router.beforeEach((to) => {
-  const auth = useAuth()
-  const publicPaths = ['/login', '/register', '/forgot-password']
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const publicRoutes = ['/login']
   
-  if (!publicPaths.includes(to.path) && !auth.isAuthenticated) {
-    return '/login'
+  // Simple check - redirect to login if not on public route
+  if (!publicRoutes.includes(to.path)) {
+    // Check localStorage directly to avoid store initialization issues
+    const isAuthenticated = localStorage.getItem('auth_authenticated') === "true"
+    
+    if (!isAuthenticated) {
+      next('/login')
+      return
+    }
   }
   
-  if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
-    return '/'
-  }
+  next()
 })
 
 export default router

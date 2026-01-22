@@ -11,8 +11,23 @@ export const useProducts = defineStore("products", {
         category: "Rock",
         type: "vinyl",
         condition: "excellent",
-        image: "https://via.placeholder.com/300x300/000000/FFFFFF?text=Pink+Floyd",
-        description: "Classic progressive rock masterpiece from 1973"
+        image: "https://picsum.photos/300/300?random=1",
+        description: "Classic progressive rock masterpiece from 1973",
+        // Audio properties for player
+        duration: 2580, // 43 minutes in seconds
+        trackList: [
+          { title: "Speak to Me", duration: 60 },
+          { title: "Breathe", duration: 174 },
+          { title: "On the Run", duration: 225 },
+          { title: "Time", duration: 420 },
+          { title: "The Great Gig in the Sky", duration: 288 },
+          { title: "Money", duration: 384 },
+          { title: "Us and Them", duration: 462 },
+          { title: "Any Colour You Like", duration: 204 },
+          { title: "Brain Damage", duration: 228 },
+          { title: "Eclipse", duration: 123 }
+        ],
+        audioUrl: "https://example.com/audio/dark-side-of-moon.mp3"
       },
       {
         id: 2,
@@ -22,7 +37,7 @@ export const useProducts = defineStore("products", {
         category: "Pop",
         type: "vinyl",
         condition: "very good",
-        image: "https://via.placeholder.com/300x300/000000/FFFFFF?text=Michael+Jackson",
+        image: "https://picsum.photos/300/300?random=2",
         description: "The best-selling album of all time"
       },
       {
@@ -33,7 +48,7 @@ export const useProducts = defineStore("products", {
         category: "Jazz",
         type: "vinyl",
         condition: "excellent",
-        image: "https://via.placeholder.com/300x300/000000/FFFFFF?text=Miles+Davis",
+        image: "https://picsum.photos/300/300?random=3",
         description: "Legendary jazz album from 1959"
       },
       {
@@ -44,7 +59,7 @@ export const useProducts = defineStore("products", {
         category: "Grunge",
         type: "vinyl",
         condition: "very good",
-        image: "https://via.placeholder.com/300x300/000000/FFFFFF?text=Nirvana",
+        image: "https://picsum.photos/300/300?random=4",
         description: "Iconic grunge album from 1991"
       },
       {
@@ -55,7 +70,7 @@ export const useProducts = defineStore("products", {
         category: "Rock",
         type: "vinyl",
         condition: "excellent",
-        image: "https://via.placeholder.com/300x300/000000/FFFFFF?text=The+Beatles",
+        image: "https://picsum.photos/300/300?random=5",
         description: "Final studio album from The Beatles"
       }
     ],
@@ -84,8 +99,6 @@ export const useProducts = defineStore("products", {
   
   actions: {
     manageData(type, operation, data) {
-      const saveData = (key, value) => localStorage.setItem(key, JSON.stringify(value))
-      
       switch(type) {
         case 'favorites':
           if (operation === 'add' && !this.favorites.includes(data)) {
@@ -95,7 +108,8 @@ export const useProducts = defineStore("products", {
           } else if (operation === 'clear') {
             this.favorites = []
           }
-          saveData("favorites", this.favorites)
+          // Save favorites as comma-separated string
+          localStorage.setItem("favorites", this.favorites.join(','))
           break
           
         case 'cart':
@@ -108,8 +122,27 @@ export const useProducts = defineStore("products", {
           } else if (operation === 'clear') {
             this.cart = []
           }
-          saveData("cart", this.cart)
+          // Save cart as string: id1:qty1,id2:qty2
+          const cartString = this.cart.map(item => `${item.id}:${item.quantity}`).join(',')
+          localStorage.setItem("cart", cartString)
           break
+      }
+    },
+    
+    loadFromLocalStorage() {
+      // Load favorites
+      const savedFavorites = localStorage.getItem("favorites")
+      if (savedFavorites) {
+        this.favorites = savedFavorites ? savedFavorites.split(',').map(id => parseInt(id)).filter(id => !isNaN(id)) : []
+      }
+      
+      // Load cart
+      const savedCart = localStorage.getItem("cart")
+      if (savedCart) {
+        this.cart = savedCart ? savedCart.split(',').map(item => {
+          const [id, quantity] = item.split(':').map(Number)
+          return { id: id || 0, quantity: quantity || 1 }
+        }).filter(item => item.id > 0) : []
       }
     }
   }
