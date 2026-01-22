@@ -4,6 +4,8 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite'
+import eslint from 'vite-plugin-eslint'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,6 +13,11 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    eslint({
+      cache: false,
+      include: ['src/**/*.js', 'src/**/*.vue', 'src/**/*.ts'],
+      exclude: []
+    }),
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
