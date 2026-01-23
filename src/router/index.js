@@ -55,6 +55,11 @@ const routes = [
     path: '/checkout',
     name: 'checkout',
     component: CartPage
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/components/dashboard/DashboardPage.vue')
   }
 ]
 
