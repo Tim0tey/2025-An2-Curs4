@@ -57,22 +57,22 @@ export const useNotifications = defineStore("notifications", {
         timestamp: new Date().toISOString(),
         metadata: data.metadata || {}
       }
-      state.notifications.unshift(notification)
+      this.notifications.unshift(notification)
       
-      if (state.notifications.length > state.settings.maxUnread) {
-        const excess = state.notifications.length - state.settings.maxUnread
-        state.notifications.splice(-excess, excess)
+      if (this.notifications.length > this.settings.maxUnread) {
+        const excess = this.notifications.length - this.settings.maxUnread
+        this.notifications.splice(-excess, excess)
       }
       
       return notification.id
     },
 
     removeNotification(id) {
-      state.notifications = state.notifications.filter(n => n.id !== id)
+      this.notifications = this.notifications.filter(n => n.id !== id)
     },
 
     markAsRead(id) {
-      const notification = state.notifications.find(n => n.id === id)
+      const notification = this.notifications.find(n => n.id === id)
       if (notification) {
         notification.read = true
         notification.readAt = new Date().toISOString()
@@ -80,7 +80,7 @@ export const useNotifications = defineStore("notifications", {
     },
 
     markAllAsRead() {
-      state.notifications.forEach(n => {
+      this.notifications.forEach(n => {
         if (!n.read) {
           n.read = true
           n.readAt = new Date().toISOString()
@@ -89,27 +89,27 @@ export const useNotifications = defineStore("notifications", {
     },
 
     clearNotifications() {
-      state.notifications = []
+      this.notifications = []
     },
 
     updateSettings(newSettings) {
-      Object.assign(state.settings, newSettings)
+      Object.assign(this.settings, newSettings)
       this.saveSettingsToStorage()
     },
 
     toggleSetting(setting) {
-      if (typeof state.settings[setting] === 'boolean') {
-        state.settings[setting] = !state.settings[setting]
+      if (typeof this.settings[setting] === 'boolean') {
+        this.settings[setting] = !this.settings[setting]
         this.saveSettingsToStorage()
       }
     },
 
     setFilter(filterType, value) {
-      state.filters[filterType] = value
+      this.filters[filterType] = value
     },
 
     clearAllFilters() {
-      state.filters = {
+      this.filters = {
         type: null,
         priority: null,
         dateRange: null,
@@ -125,7 +125,7 @@ export const useNotifications = defineStore("notifications", {
 
     removeMultiple(ids) {
       const notificationIds = Array.isArray(ids) ? ids : [ids]
-      state.notifications = state.notifications.filter(n => !notificationIds.includes(n.id))
+      this.notifications = this.notifications.filter(n => !notificationIds.includes(n.id))
     },
 
     createSystemNotification(message, priority = 'low') {
@@ -174,40 +174,40 @@ export const useNotifications = defineStore("notifications", {
     },
 
     getNotificationById(id) {
-      return state.notifications.find(n => n.id === id)
+      return this.notifications.find(n => n.id === id)
     },
 
     getUnreadCount() {
-      return state.notifications.filter(n => !n.read).length
+      return this.notifications.filter(n => !n.read).length
     },
 
     hasUnreadCritical() {
-      return state.notifications.some(n => !n.read && n.priority === 'critical')
+      return this.notifications.some(n => !n.read && n.priority === 'critical')
     },
 
     saveToStorage() {
-      localStorage.setItem("notifications", JSON.stringify(state.notifications))
+      localStorage.setItem("notifications", JSON.stringify(this.notifications))
     },
 
     saveSettingsToStorage() {
-      localStorage.setItem("notification_settings", JSON.stringify(state.settings))
+      localStorage.setItem("notification_settings", JSON.stringify(this.settings))
     },
 
     loadFromLocalStorage() {
       const savedNotifications = localStorage.getItem("notifications")
       if (savedNotifications) {
         try {
-          state.notifications = JSON.parse(savedNotifications)
+          this.notifications = JSON.parse(savedNotifications)
         } catch (e) {
           console.error('Failed to load notifications:', e)
-          state.notifications = []
+          this.notifications = []
         }
       }
       
       const savedSettings = localStorage.getItem("notification_settings")
       if (savedSettings) {
         try {
-          state.settings = { ...state.settings, ...JSON.parse(savedSettings) }
+          this.settings = { ...this.settings, ...JSON.parse(savedSettings) }
         } catch (e) {
           console.error('Failed to load notification settings:', e)
         }

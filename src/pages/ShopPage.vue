@@ -8,11 +8,17 @@
             <h1 class="text-2xl font-bold text-gray-900">🎵 Vinyl Store</h1>
             <p class="mt-2 text-gray-600">Browse our collection</p>
           </div>
-          <nav class="flex space-x-8">
+          <nav class="flex space-x-8 items-center">
             <router-link to="/" class="text-gray-700 hover:text-blue-600">Home</router-link>
             <router-link to="/shop" class="text-blue-600 font-medium">Shop</router-link>
-            <router-link to="/favorites" class="text-gray-700 hover:text-blue-600">Favorites</router-link>
-            <router-link to="/cart" class="text-gray-700 hover:text-blue-600">Cart</router-link>
+            <router-link to="/favorites" class="text-gray-700 hover:text-blue-600 flex items-center space-x-1">
+              <i class="bi bi-heart"></i>
+              <span>Favorites</span>
+            </router-link>
+            <router-link to="/cart" class="text-gray-700 hover:text-blue-600 flex items-center space-x-1">
+              <i class="bi bi-cart"></i>
+              <span>Cart</span>
+            </router-link>
             <router-link to="/player" class="text-gray-700 hover:text-blue-600">Player</router-link>
             <router-link to="/collection" class="text-gray-700 hover:text-blue-600">Collection</router-link>
             <button v-if="!authStore.authInfo.isAuthenticated" @click="logout" class="text-gray-700 hover:text-blue-600">Login</button>
@@ -39,19 +45,15 @@
         <div
           v-for="product in filteredProducts"
           :key="product.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative cursor-pointer"
+          @click="viewDetails(product.id)"
         >
-          <img
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-48 object-cover hover:opacity-90 transition-opacity duration-300"
-            />
-            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-              <i class="bi bi-eye text-white text-xl"></i>
-            </div>
-            <div class="absolute top-2 right-2">
-              <span class="bg-blue-600 text-white px-2 py-1 text-xs rounded-full">{{ product.condition }}</span>
-            </div>
+          <div class="h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative">
+            <i class="bi bi-music-note text-gray-500 text-4xl"></i>
+          </div>
+          <div class="absolute top-2 right-2">
+            <span class="bg-blue-600 text-white px-2 py-1 text-xs rounded-full">{{ product.condition }}</span>
+          </div>
           <div class="p-4">
             <h3 class="text-lg font-semibold text-gray-900">{{ product.name }}</h3>
             <p class="text-sm text-gray-600">{{ product.artist }}</p>
@@ -59,14 +61,14 @@
             <div class="flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">${{ product.price }}</span>
               <button
-                  @click="toggleFavorite(product.id)"
+                  @click.stop="toggleFavorite(product.id)"
                   :class="isFavorite(product.id) ? 'text-red-600 hover:text-red-800' : 'text-gray-400 hover:text-red-600'"
                   class="p-2 rounded-full"
                 >
                   <i :class="isFavorite(product.id) ? 'bi bi-heart-fill' : 'bi bi-heart'" class="w-5 h-5"></i>
                 </button>
               <button
-                  @click="addToCart(product.id)"
+                  @click.stop="addToCart(product.id)"
                   class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
                 >
                   <i class="bi bi-cart-plus w-5 h-5"></i>

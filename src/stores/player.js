@@ -69,34 +69,34 @@ export const usePlayer = defineStore("player", {
     managePlayer(operation, data) {
       switch(operation) {
         case 'play':
-          if (state.currentTrack) {
-            state.isPlaying = true
-            state.isPaused = false
+          if (this.currentTrack) {
+            this.isPlaying = true
+            this.isPaused = false
           }
           break
           
         case 'pause':
-          state.isPlaying = false
-          state.isPaused = true
+          this.isPlaying = false
+          this.isPaused = true
           break
           
         case 'stop':
-          state.isPlaying = false
-          state.isPaused = false
-          state.currentTrack = null
-          state.currentTime = 0
-          state.duration = 0
+          this.isPlaying = false
+          this.isPaused = false
+          this.currentTrack = null
+          this.currentTime = 0
+          this.duration = 0
           break
           
         case 'next':
-          if (state.currentIndex < state.playlist.length - 1) {
-            state.currentIndex++
+          if (this.currentIndex < this.playlist.length - 1) {
+            this.currentIndex++
           }
           break
           
         case 'previous':
-          if (state.currentIndex > 0) {
-            state.currentIndex--
+          if (this.currentIndex > 0) {
+            this.currentIndex--
           }
           break
       }
@@ -106,34 +106,34 @@ export const usePlayer = defineStore("player", {
     managePlaylist(operation, data) {
       switch(operation) {
         case 'add':
-          state.playlist.push(data)
+          this.playlist.push(data)
           break
           
         case 'remove':
-          state.playlist = state.playlist.filter((_, index) => index !== data)
-          if (state.currentIndex >= data && state.currentIndex > 0) {
-            state.currentIndex--
+          this.playlist = this.playlist.filter((_, index) => index !== data)
+          if (this.currentIndex >= data && this.currentIndex > 0) {
+            this.currentIndex--
           }
           break
           
         case 'clear':
-          state.playlist = []
-          state.currentIndex = 0
+          this.playlist = []
+          this.currentIndex = 0
           break
           
         case 'shuffle':
-          const shuffled = [...state.playlist].sort(() => Math.random() - 0.5)
-          state.playlist = shuffled
-          state.currentIndex = 0
+          const shuffled = [...this.playlist].sort(() => Math.random() - 0.5)
+          this.playlist = shuffled
+          this.currentIndex = 0
           break
           
         case 'move':
           const [from, to] = data
-          const item = state.playlist[from]
-          state.playlist.splice(from, 1)
-          state.playlist.splice(to, 0, item)
-          if (state.currentIndex === from) {
-            state.currentIndex = to
+          const item = this.playlist[from]
+          this.playlist.splice(from, 1)
+          this.playlist.splice(to, 0, item)
+          if (this.currentIndex === from) {
+            this.currentIndex = to
           }
           break
       }
@@ -143,15 +143,15 @@ export const usePlayer = defineStore("player", {
     manageVolume(operation, data) {
       switch(operation) {
         case 'set':
-          state.volume = Math.max(0, Math.min(1, data))
+          this.volume = Math.max(0, Math.min(1, data))
           break
           
         case 'up':
-          state.volume = Math.min(1, state.volume + 0.1)
+          this.volume = Math.min(1, this.volume + 0.1)
           break
           
         case 'down':
-          state.volume = Math.max(0, state.volume - 0.1)
+          this.volume = Math.max(0, this.volume - 0.1)
           break
       }
     },
@@ -160,14 +160,14 @@ export const usePlayer = defineStore("player", {
     manageTrack(operation, data) {
       switch(operation) {
         case 'load':
-          state.currentTrack = data
-          state.currentTime = 0
-          state.duration = data.duration || 0
-          state.currentIndex = state.playlist.findIndex(track => track.id === data.id)
+          this.currentTrack = data
+          this.currentTime = 0
+          this.duration = data.duration || 0
+          this.currentIndex = this.playlist.findIndex(track => track.id === data.id)
           break
           
         case 'seek':
-          state.currentTime = Math.max(0, Math.min(state.duration, data))
+          this.currentTime = Math.max(0, Math.min(this.duration, data))
           break
       }
     },
@@ -177,17 +177,17 @@ export const usePlayer = defineStore("player", {
       switch(operation) {
         case 'toggleRepeat':
           const modes = ['none', 'one', 'all']
-          const currentIndex = modes.indexOf(state.repeat)
+          const currentIndex = modes.indexOf(this.repeat)
           const nextIndex = (currentIndex + 1) % modes.length
-          state.repeat = modes[nextIndex]
+          this.repeat = modes[nextIndex]
           break
           
         case 'toggleShuffle':
-          state.shuffle = !state.shuffle
+          this.shuffle = !this.shuffle
           break
           
         case 'toggleVisualizer':
-          state.visualizer = !state.visualizer
+          this.visualizer = !this.visualizer
           break
       }
     },
@@ -196,7 +196,7 @@ export const usePlayer = defineStore("player", {
     manageEqualizer(operation, data) {
       switch(operation) {
         case 'set':
-          state.equalizer = {
+          this.equalizer = {
             bass: Math.max(0, Math.min(1, data.bass || 0)),
             mid: Math.max(0, Math.min(1, data.mid || 0)),
             treble: Math.max(0, Math.min(1, data.treble || 0))
@@ -204,7 +204,7 @@ export const usePlayer = defineStore("player", {
           break
           
         case 'reset':
-          state.equalizer = { bass: 0, mid: 0, treble: 0 }
+          this.equalizer = { bass: 0, mid: 0, treble: 0 }
           break
       }
     },
@@ -213,17 +213,17 @@ export const usePlayer = defineStore("player", {
     manageStats(operation, data) {
       switch(operation) {
         case 'recordSkip':
-          state.skipCount++
+          this.skipCount++
           break
           
         case 'recordLike':
-          state.likeCount++
+          this.likeCount++
           break
           
         case 'reset':
-          state.skipCount = 0
-          state.likeCount = 0
-          state.playHistory = []
+          this.skipCount = 0
+          this.likeCount = 0
+          this.playHistory = []
           break
       }
     }
@@ -243,20 +243,20 @@ export const usePlayer = defineStore("player", {
     const savedLikeCount = localStorage.getItem("player_like_count")
     const savedEqualizer = localStorage.getItem("player_equalizer")
     
-    if (savedVolume) state.volume = parseFloat(savedVolume)
-    if (savedRepeat) state.repeat = savedRepeat
-    if (savedShuffle) state.shuffle = savedShuffle === 'true'
-    if (savedVisualizer) state.visualizer = savedVisualizer === 'true'
-    if (savedPlaylist) state.playlist = JSON.parse(savedPlaylist)
-    if (savedCurrentTrack) state.currentTrack = JSON.parse(savedCurrentTrack)
-    if (savedCurrentTime) state.currentTime = parseFloat(savedCurrentTime)
-    if (savedDuration) state.duration = parseFloat(savedDuration)
-    if (savedPlayHistory) state.playHistory = JSON.parse(savedPlayHistory)
-    if (savedSkipCount) state.skipCount = parseInt(savedSkipCount)
-    if (savedLikeCount) state.likeCount = parseInt(savedLikeCount)
+    if (savedVolume) this.volume = parseFloat(savedVolume)
+    if (savedRepeat) this.repeat = savedRepeat
+    if (savedShuffle) this.shuffle = savedShuffle === 'true'
+    if (savedVisualizer) this.visualizer = savedVisualizer === 'true'
+    if (savedPlaylist) this.playlist = JSON.parse(savedPlaylist)
+    if (savedCurrentTrack) this.currentTrack = JSON.parse(savedCurrentTrack)
+    if (savedCurrentTime) this.currentTime = parseFloat(savedCurrentTime)
+    if (savedDuration) this.duration = parseFloat(savedDuration)
+    if (savedPlayHistory) this.playHistory = JSON.parse(savedPlayHistory)
+    if (savedSkipCount) this.skipCount = parseInt(savedSkipCount)
+    if (savedLikeCount) this.likeCount = parseInt(savedLikeCount)
     if (savedEqualizer) {
       const [bass, mid, treble] = savedEqualizer.split(',').map(Number)
-      state.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
+      this.equalizer = { bass: bass || 0, mid: mid || 0, treble: treble || 0 }
     }
   }
 })

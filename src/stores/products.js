@@ -4,11 +4,11 @@ import { useNotifications } from "./notifications"
 export const useProducts = defineStore("products", {
   state: () => ({
     products: [
-      { id: 1, name: "The Dark Side of the Moon", artist: "Pink Floyd", price: 29.99, category: "Rock", type: "vinyl", condition: "excellent", image: "https://picsum.photos/300/300?random=1", description: "Classic progressive rock masterpiece from 1973" },
-      { id: 2, name: "Thriller", artist: "Michael Jackson", price: 25.99, category: "Pop", type: "vinyl", condition: "very good", image: "https://picsum.photos/300/300?random=2", description: "The best-selling album of all time" },
-      { id: 3, name: "Kind of Blue", artist: "Miles Davis", price: 34.99, category: "Jazz", type: "vinyl", condition: "excellent", image: "https://picsum.photos/300/300?random=3", description: "Legendary jazz album from 1959" },
-      { id: 4, name: "Nevermind", artist: "Nirvana", price: 22.99, category: "Grunge", type: "vinyl", condition: "very good", image: "https://picsum.photos/300/300?random=4", description: "Iconic grunge album from 1991" },
-      { id: 5, name: "Abbey Road", artist: "The Beatles", price: 31.99, category: "Rock", type: "vinyl", condition: "excellent", image: "https://picsum.photos/300/300?random=5", description: "Final studio album from The Beatles" }
+      { id: 1, name: "The Dark Side of the Moon", artist: "Pink Floyd", price: 29.99, category: "Rock", type: "vinyl", condition: "excellent", description: "Classic progressive rock masterpiece from 1973", tracks: ["Speak to Me", "Breathe", "On the Run", "Time", "The Great Gig in the Sky", "Money", "Us and Them", "Any Colour You Like", "Brain Damage", "Eclipse"] },
+      { id: 2, name: "Thriller", artist: "Michael Jackson", price: 25.99, category: "Pop", type: "vinyl", condition: "very good", description: "The best-selling album of all time", tracks: ["Wanna Be Startin' Somethin'", "Baby Be Mine", "The Girl Is Mine", "Thriller", "Beat It", "Billie Jean", "Human Nature", "P.Y.T. (Pretty Young Thing)", "The Lady in My Life"] },
+      { id: 3, name: "Kind of Blue", artist: "Miles Davis", price: 34.99, category: "Jazz", type: "vinyl", condition: "excellent", description: "Legendary jazz album from 1959", tracks: ["So What", "Freddie Freeloader", "Blue in Green", "All Blues", "Flamenco Sketches"] },
+      { id: 4, name: "Nevermind", artist: "Nirvana", price: 22.99, category: "Grunge", type: "vinyl", condition: "very good", description: "Iconic grunge album from 1991", tracks: ["Smells Like Teen Spirit", "In Bloom", "Come as You Are", "Breed", "Lithium", "Polly", "Territorial Pissings", "Drain You", "Lounge Act", "Stay Away", "On a Plain", "Something in the Way"] },
+      { id: 5, name: "Abbey Road", artist: "The Beatles", price: 31.99, category: "Rock", type: "vinyl", condition: "excellent", description: "Final studio album from The Beatles", tracks: ["Come Together", "Something", "Maxwell's Silver Hammer", "Oh! Darling", "Octopus's Garden", "I Want You (She's So Heavy)", "Here Comes the Sun", "Because", "You Never Give Me Your Money", "Sun King", "Mean Mr. Mustard", "Polythene Pam", "She Came in Through the Bathroom Window", "Golden Slumbers", "Carry That Weight", "The End", "Her Majesty"] }
     ],
     favorites: [],
     cart: [],
@@ -45,13 +45,13 @@ export const useProducts = defineStore("products", {
     manageProducts(operation, data) {
       switch(operation) {
         case 'search':
-          state.filters.searchTerm = data
+          this.filters.searchTerm = data
           break
         case 'filterByCategory':
-          state.filters.category = data
+          this.filters.category = data
           break
         case 'clearFilters':
-          state.filters = { category: null, searchTerm: null }
+          this.filters = { category: null, searchTerm: null }
           break
       }
     },
@@ -60,49 +60,49 @@ export const useProducts = defineStore("products", {
       const notificationsStore = useNotifications()
       switch(operation) {
         case 'add':
-          if (!state.favorites.includes(data)) {
-            state.favorites.push(data)
-            notificationsStore.createCartNotification(`❤️ "${state.products.find(p => p.id === data)?.name || 'Product'}" added to favorites!`)
+          if (!this.favorites.includes(data)) {
+            this.favorites.push(data)
+            notificationsStore.createCartNotification(`"${this.products.find(p => p.id === data)?.name || 'Product'}" added to favorites!`)
           }
           break
         case 'remove':
-          state.favorites = state.favorites.filter(id => id !== data)
-          notificationsStore.createCartNotification(`💔 "${state.products.find(p => p.id === data)?.name || 'Product'}" removed from favorites`)
+          this.favorites = this.favorites.filter(id => id !== data)
+          // No notification when removing from favorites
           break
         case 'clear':
-          state.favorites = []
-          notificationsStore.createCartNotification('🧹 All favorites cleared')
+          this.favorites = []
+          // No notification when clearing favorites
           break
       }
-      localStorage.setItem("favorites", state.favorites.join(','))
+      // Save favorites to localStorage
+      localStorage.setItem("favorites", this.favorites.join(','))
     },
 
     manageCart(operation, data) {
       const notificationsStore = useNotifications()
       switch(operation) {
         case 'add':
-          const existingItem = state.cart.find(item => item.id === data.id)
+          const existingItem = this.cart.find(item => item.id === data.id)
           if (existingItem) {
             existingItem.quantity += data.quantity || 1
           } else {
-            state.cart.push({ id: data.id, quantity: data.quantity || 1 })
+            this.cart.push({ id: data.id, quantity: data.quantity || 1 })
           }
-          notificationsStore.createCartNotification(`🛒 "${state.products.find(p => p.id === data.id)?.name || 'Product'}" added to cart!`)
+          notificationsStore.createCartNotification(` "${this.products.find(p => p.id === data.id)?.name || 'Product'}" added to cart!`)
           break
         case 'remove':
-          state.cart = state.cart.filter(item => item.id !== data)
-          notificationsStore.createCartNotification(`🗑️ "${state.products.find(p => p.id === data)?.name || 'Product'}" removed from cart`)
+          this.cart = this.cart.filter(item => item.id !== data)
           break
         case 'clear':
-          state.cart = []
-          notificationsStore.createCartNotification('🛒 Cart cleared')
+          this.cart = []
           break
         case 'checkout':
-          state.cart = []
-          notificationsStore.createCartNotification('🎉 Order placed successfully! Cart cleared.')
+          this.cart = []
+          notificationsStore.createCartNotification(' Order placed successfully! Cart cleared.')
           break
       }
-      localStorage.setItem("cart", state.cart.map(item => `${item.id}:${item.quantity}`).join(','))
+      // Save cart to localStorage
+      localStorage.setItem("cart", this.cart.map(item => `${item.id}:${item.quantity}`).join(','))
     },
 
     loadFromLocalStorage() {
@@ -114,8 +114,8 @@ export const useProducts = defineStore("products", {
       const savedCart = localStorage.getItem("cart")
       if (savedCart) {
         this.cart = savedCart.split(',').map(item => {
-          const [id, quantity] = item.split(':').map(Number)
-          return { id: id || 0, quantity: quantity || 1 }
+          const [id, quantity] = item.split(':')
+          return { id: parseInt(id), quantity: parseInt(quantity) || 1 }
         })
       }
     }

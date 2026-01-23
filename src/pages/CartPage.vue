@@ -132,7 +132,13 @@ const logout = () => {
 }
 
 onMounted(() => {
-  // Load cart using store method
-  productsStore.loadFromLocalStorage()
+  // Load cart using store method with error handling
+  try {
+    if (productsStore.loadFromLocalStorage) {
+      productsStore.loadFromLocalStorage()
+    }
+  } catch (error) {
+    console.error('Failed to load cart from localStorage:', error)
+  }
 })
 </script>

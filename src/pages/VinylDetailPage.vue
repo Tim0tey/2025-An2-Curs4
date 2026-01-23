@@ -18,11 +18,9 @@
         <!-- Product Image -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-80 object-cover"
-            />
+            <div class="h-80 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <i class="bi bi-music-note text-gray-500 text-6xl"></i>
+            </div>
           </div>
         </div>
 
@@ -59,6 +57,23 @@
                 <i class="bi bi-cart-plus w-5 h-5"></i>
                 <span class="ml-2">Add to Cart</span>
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track Listing -->
+      <div v-if="product && product.tracks" class="mt-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Track Listing</h2>
+          <div class="space-y-2">
+            <div 
+              v-for="(track, index) in product.tracks" 
+              :key="index"
+              class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <span class="text-sm font-medium text-gray-500 w-8">{{ index + 1 }}.</span>
+              <span class="text-gray-900">{{ track }}</span>
             </div>
           </div>
         </div>

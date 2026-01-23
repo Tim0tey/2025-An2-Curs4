@@ -50,6 +50,11 @@ const routes = [
     path: '/collection',
     name: 'collection',
     component: CollectionPage
+  },
+  {
+    path: '/checkout',
+    name: 'checkout',
+    component: CartPage
   }
 ]
 
