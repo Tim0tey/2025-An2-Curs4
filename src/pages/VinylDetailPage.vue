@@ -1,7 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <AppHeader />
-    
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Back Button -->
       <div class="mb-6">
@@ -93,7 +91,6 @@ import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProducts } from '@/stores/products'
 import { useAuth } from '@/stores/auth'
-import AppHeader from '@/components/AppHeader.vue'
 
 const route = useRoute()
 const router = useRouter()

@@ -1,25 +1,12 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-6">
-          <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-gray-900">❤️ Favorites</h1>
-          </div>
-          <nav class="flex space-x-8">
-            <router-link to="/" class="text-gray-700 hover:text-blue-600">Home</router-link>
-            <router-link to="/shop" class="text-gray-700 hover:text-blue-600">Shop</router-link>
-            <router-link to="/favorites" class="text-gray-700 hover:text-blue-600">Favorites</router-link>
-            <router-link to="/cart" class="text-gray-700 hover:text-blue-600">Cart</router-link>
-            <button v-if="authStore.authInfo.isAuthenticated" @click="logout" class="text-gray-700 hover:text-blue-600">Logout</button>
-          </nav>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Title -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">❤️ My Favorites</h1>
+        <p class="mt-2 text-gray-600">Your favorite vinyl records collection</p>
+      </div>
+
       <div v-if="favoriteProducts.length === 0" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 004.5 4.5v9A4.5 4.5 0 00-4.5 4.5h9A4.5 4.5 0 00-4.5-4.5v-9a4.5 4.5 0 004.5-4.5h-9z" />
@@ -109,16 +96,16 @@ const router = useRouter()
 const favoriteProducts = computed(() => productsStore.productInfo.favoriteProducts)
 
 const removeFromFavorites = (productId) => {
-  productsStore.manageData('favorites', 'remove', productId)
+  productsStore.manageFavorites('remove', productId)
 }
 
 const addToCart = (productId) => {
-  productsStore.manageData('cart', 'add', { id: productId, quantity: 1 })
+  productsStore.manageCart('add', { id: productId, quantity: 1 })
 }
 
 const clearAllFavorites = () => {
   if (confirm('Are you sure you want to clear all your favorites?')) {
-    productsStore.manageData('favorites', 'clear')
+    productsStore.manageFavorites('clear')
   }
 }
 

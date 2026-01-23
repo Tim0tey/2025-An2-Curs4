@@ -1,23 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-6">
-          <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-gray-900">🛒 Shopping Cart</h1>
-          </div>
-          <nav class="flex space-x-8">
-            <router-link to="/" class="text-gray-700 hover:text-blue-600">Home</router-link>
-            <router-link to="/shop" class="text-gray-700 hover:text-blue-600">Shop</router-link>
-            <router-link to="/favorites" class="text-gray-700 hover:text-blue-600">Favorites</router-link>
-            <router-link to="/cart" class="text-gray-700 hover:text-blue-600">Cart</router-link>
-            <button v-if="authStore.authInfo.isAuthenticated" @click="logout" class="text-gray-700 hover:text-blue-600">Logout</button>
-          </nav>
-        </div>
-      </div>
-    </header>
-
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div v-if="cartItems.length === 0" class="text-center py-12">

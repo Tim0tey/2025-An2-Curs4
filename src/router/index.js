@@ -36,7 +36,7 @@ const routes = [
     name: 'favorites',
     component: FavoritesPage
   },
-    {
+  {
     path: '/player',
     name: 'player',
     component: PlayerPage
@@ -69,22 +69,27 @@ const router = createRouter({
   linkActiveClass: 'btn-primary border'
 })
 
-// Navigation guard temporarily disabled for development
-// router.beforeEach((to, from, next) => {
-//   const publicRoutes = ['/login']
-//   
-//   // Simple check - redirect to login if not on public route
-//   if (!publicRoutes.includes(to.path)) {
-//     // Check localStorage directly to avoid store initialization issues
-//     const isAuthenticated = localStorage.getItem('auth_authenticated') === "true"
-//     
-//     if (!isAuthenticated) {
-//       next('/login')
-//       return
-//     }
-//   }
-//   
-//   next()
-// })
+// Navigation guard to handle authentication
+router.beforeEach((to, from, next) => {
+  const publicRoutes = ['/login', '/']
+  
+  // Check if user is authenticated by looking at localStorage
+  const isAuthenticated = localStorage.getItem('auth_authenticated') === 'true'
+  
+  // If not authenticated and not on public route, redirect to login
+  if (!isAuthenticated && !publicRoutes.includes(to.path)) {
+    next('/login')
+    return
+  }
+  
+  // If authenticated and trying to access login, redirect to home
+  if (isAuthenticated && to.path === '/login') {
+    next('/')
+    return
+  }
+  
+  // Otherwise, proceed as normal
+  next()
+})
 
 export default router

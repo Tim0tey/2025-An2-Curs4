@@ -1,7 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <AppHeader />
-    
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">🎵 My Collection</h1>
@@ -86,7 +84,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import AppHeader from '@/components/AppHeader.vue'
 import { useCollection } from '@/stores/collection'
 import { usePlayer } from '@/stores/player'
 

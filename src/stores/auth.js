@@ -42,7 +42,10 @@ export const useAuth = defineStore("auth", {
           const tempPassword = localStorage.getItem("temp_new_password")
           const isValidPassword = data.password === VALID_PASSWORD || data.password === tempPassword
           
-          if (data.email === VALID_EMAIL && isValidPassword) {
+          // Allow login with either VALID_EMAIL or any email that has a temp password
+          const isValidEmail = data.email === VALID_EMAIL || (tempPassword && data.email.includes('@'))
+          
+          if (isValidEmail && isValidPassword) {
             this.user = {
               name: data.userName || 'Vinyl Lover',
               email: data.email,

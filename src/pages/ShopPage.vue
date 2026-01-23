@@ -1,35 +1,13 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-6">
-          <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-gray-900">🎵 Vinyl Store</h1>
-            <p class="mt-2 text-gray-600">Browse our collection</p>
-          </div>
-          <nav class="flex space-x-8 items-center">
-            <router-link to="/" class="text-gray-700 hover:text-blue-600">Home</router-link>
-            <router-link to="/shop" class="text-blue-600 font-medium">Shop</router-link>
-            <router-link to="/favorites" class="text-gray-700 hover:text-blue-600 flex items-center space-x-1">
-              <i class="bi bi-heart"></i>
-              <span>Favorites</span>
-            </router-link>
-            <router-link to="/cart" class="text-gray-700 hover:text-blue-600 flex items-center space-x-1">
-              <i class="bi bi-cart"></i>
-              <span>Cart</span>
-            </router-link>
-            <router-link to="/player" class="text-gray-700 hover:text-blue-600">Player</router-link>
-            <router-link to="/collection" class="text-gray-700 hover:text-blue-600">Collection</router-link>
-            <button v-if="!authStore.authInfo.isAuthenticated" @click="logout" class="text-gray-700 hover:text-blue-600">Login</button>
-            <button v-else @click="logout" class="text-gray-700 hover:text-blue-600">Logout</button>
-          </nav>
-        </div>
-      </div>
-    </header>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+      <!-- Page Title -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">🎵 Vinyl Store</h1>
+        <p class="mt-2 text-gray-600">Browse our collection of vinyl records</p>
+      </div>
+
       <!-- Search Bar -->
       <div class="mb-8">
         <input

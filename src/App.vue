@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <AppHeader />
     <router-view />
     <NotificationToast />
   </div>
@@ -7,6 +8,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import AppHeader from '@/components/AppHeader.vue'
 import NotificationToast from '@/components/NotificationToast.vue'
 
 onMounted(() => {

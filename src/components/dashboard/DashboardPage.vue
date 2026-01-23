@@ -15,6 +15,12 @@
           <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
           <div class="space-y-3">
             <router-link
+              to="/"
+              class="block w-full text-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              🏠 Home
+            </router-link>
+            <router-link
               to="/shop"
               class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
