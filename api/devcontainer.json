@@ -1,0 +1,36 @@
+{
+    "name": "VinyFie - Api",
+    "dockerComposeFile": "../compose.yaml",
+    "service": "api",
+    "workspaceFolder": "/task",
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                
+                "dbaeumer.vscode-eslint",
+                "arcanis.vscode-zipfs"
+            ],
+            "settings": {
+                "editor.formatOnSave": false,
+                "[vue]": {
+                    "editor.defaultFormatter": "Vue.volar"
+                },
+                "editor.defaultFormatter": "Vue.volar",
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.eslint": "always",
+                    "source.fixAll": "always"
+                }
+            }
+        }
+    },
+    "forwardPorts": [
+        3000
+    ],
+    "containerEnv": {
+        "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
+    },
+    "postCreateCommand": "yarn install"
+}
