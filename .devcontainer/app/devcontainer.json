@@ -9,7 +9,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "Vue.volar",
+                
                 "dbaeumer.vscode-eslint",
                 "arcanis.vscode-zipfs"
             ],
@@ -27,7 +27,7 @@
         }
     },
     "forwardPorts": [
-        5173
+        3000
     ],
     "containerEnv": {
         "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
