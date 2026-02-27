@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .docker
+    stdin_open: true
+    tty: true
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: true
+      CHOKIDAR_INTERVAL: 100
+      ESLINT_NO_DEV_ERRORS: true  # Suppress ESLint errors in Docker
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/.vscode:/app/.vscode  # Mount VS Code extensions
+    working_dir: /app
+    user: 1000:1000
