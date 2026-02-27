@@ -1,6 +1,6 @@
 {
     "name": "VinyFie - Api",
-    "dockerComposeFile": "../compose.yaml",
+    "dockerComposeFile": "../../compose.yaml",
     "service": "api",
     "workspaceFolder": "/task",
     "mounts": [
